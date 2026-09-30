@@ -1,0 +1,37 @@
+Third-party notice
+===================
+
+This repository is an adaptation layer. It is MIT-licensed in its own right
+(see `LICENSE`), but it redistributes and derives from third-party work.
+
+Up Ponytail
+-----------
+
+The Ponytail ruleset, all six skill bodies under `ponytail/vendor/skills/`,
+and the intensity-filtering logic in `ponytail/scripts/lib/ruleset.mjs`
+(ported from upstream `hooks/ponytail-instructions.js`) originate from:
+
+    Ponytail — https://github.com/DietrichGebert/ponytail
+    MIT License
+    Copyright (c) 2026 DietrichGebert
+
+The verbatim upstream license text is preserved at `ponytail/vendor/LICENSE`
+and must remain in any redistribution.
+
+Icons
+-----
+
+`ponytail/icon.png` and `ponytail/icon-dark.png` are taken from the
+Code-category icon pool bundled with the MiniMax Code desktop application
+(`assets/category-icons[−dark]/code/code-2.png`). They ship with the product
+and are not original to this repository.
+
+Why this file is separate
+-------------------------
+
+GitHub classifies a repository's license by fuzzy-matching the root `LICENSE`
+against the SPDX corpus. Appending this notice to `LICENSE` pushed the match
+below the detection threshold, so the repository displayed as "Other" instead
+of MIT. Keeping `LICENSE` as unmodified SPDX text and the attributions here
+lets automated license tooling read the terms correctly while the credit
+stays visible to people. Nothing is dropped by the split.

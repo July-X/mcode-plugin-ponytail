@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 July-X (MiniMax Code adaptation layer for this repository)
+Copyright (c) 2026 July-X
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,25 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Third-party notice
-===================
-
-This repository is an adaptation layer. The Ponytail ruleset, all six skill
-bodies under `ponytail/vendor/skills/`, and the intensity-filtering logic in
-`ponytail/scripts/lib/ruleset.mjs` (ported from upstream
-`hooks/ponytail-instructions.js`) originate from:
-
-    Ponytail — https://github.com/DietrichGebert/ponytail
-    MIT License
-    Copyright (c) 2026 DietrichGebert
-
-The verbatim upstream license text is preserved at `ponytail/vendor/LICENSE`
-and must remain in any redistribution.
-
-Icons (`ponytail/icon.png`, `ponytail/icon-dark.png`) are taken from the
-Code-category icon pool bundled with the MiniMax Code desktop application
-(`assets/category-icons[−dark]/code/code-2.png`). They ship with the product
-and are not original to this repository.

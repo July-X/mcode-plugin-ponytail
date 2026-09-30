@@ -144,8 +144,10 @@ tools/validate-package.mjs        安装自检
 
 ## 许可
 
-本仓库的适配层代码与文档以 MIT 发布，许可文本见 [`LICENSE`](LICENSE)。
+本仓库的适配层代码与文档以 MIT 发布，许可文本见 [`LICENSE`](LICENSE)。第三方归属集中列在 [`NOTICE`](NOTICE)。
 
 上游 Ponytail 项目同样以 MIT 发布，Copyright © Dietrich Gebert，许可文本见 [`ponytail/vendor/LICENSE`](ponytail/vendor/LICENSE)。规则集的强度裁剪逻辑移植自上游 `hooks/ponytail-instructions.js`。
 
 图标取自 MiniMax Code 内置的 Code 类分类图标资源（`assets/category-icons[−dark]/code/code-2.png`），随产品分发，非本仓库原创。
+
+`LICENSE` 保持 SPDX 原文不加附属说明，是为了让 GitHub 与各类许可证工具能正确识别为 MIT；早期版本把上面的归属声明追加在 `LICENSE` 末尾，仓库因此被标成 `Other`。
