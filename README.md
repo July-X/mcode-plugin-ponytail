@@ -129,7 +129,7 @@ export PONYTAIL_NPM_MIRROR=https://registry.npmmirror.com
 ```
 ponytail/
   .minimax-plugin/plugin.json     插件清单
-  icon.png / icon-dark.png        明暗图标（Code 类，内置资源）
+  icon.png / icon-dark.png        明暗图标（本仓库原创，512×512 RGBA）
   hooks/hooks.json                SessionStart：每日更新检查 + 一行指针
   skills/                         7 个 MiniMax 技能（薄路由层，不复述规则）
   scripts/
@@ -148,6 +148,6 @@ tools/validate-package.mjs        安装自检
 
 上游 Ponytail 项目同样以 MIT 发布，Copyright © Dietrich Gebert，许可文本见 [`ponytail/vendor/LICENSE`](ponytail/vendor/LICENSE)。规则集的强度裁剪逻辑移植自上游 `hooks/ponytail-instructions.js`。
 
-图标取自 MiniMax Code 内置的 Code 类分类图标资源（`assets/category-icons[−dark]/code/code-2.png`），随产品分发，非本仓库原创。
+图标为本仓库原创：一笔马尾从顶端的结一路收到尾端的尖，横档是阶梯。收尖那段就是概念本身——阶梯往下走代码越来越少，少到末端只剩一个点。明暗两版是同一个形状换色，不是两张各画各的图。
 
 `LICENSE` 保持 SPDX 原文不加附属说明，是为了让 GitHub 与各类许可证工具能正确识别为 MIT；早期版本把上面的归属声明追加在 `LICENSE` 末尾，仓库因此被标成 `Other`。

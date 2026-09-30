@@ -21,10 +21,16 @@ and must remain in any redistribution.
 Icons
 -----
 
-`ponytail/icon.png` and `ponytail/icon-dark.png` are taken from the
-Code-category icon pool bundled with the MiniMax Code desktop application
-(`assets/category-icons[−dark]/code/code-2.png`). They ship with the product
-and are not original to this repository.
+`ponytail/icon.png` and `ponytail/icon-dark.png` are original to this
+repository. An earlier revision borrowed the Code-category icon bundled with
+the MiniMax Code desktop application; that is no longer the case, and the
+borrowed artwork is not redistributed here.
+
+The mark is a single tapered stroke — a tied knot at the top, three rung
+dashes, a long sweep that thins to a point. The taper is the argument: the
+laziness ladder shortens at every rung until only the minimum is left. Both
+variants are the same shape recoloured, generated at 512×512 RGBA with
+transparent rounded corners to match the other icons in the Code category.
 
 Why this file is separate
 -------------------------
