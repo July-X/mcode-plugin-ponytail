@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "name": "ponytail",
+  "displayName": "Ponytail",
+  "version": "1.1.0",
+  "description": "把 DietrichGebert/ponytail 的懒惰阶梯完整搬进编码流程：显式调用时按 YAGNI → 复用 → 标准库 → 平台原生 → 已装依赖 → 一行的顺序选方案，砍掉过度设计但绝不动校验、安全、数据丢失处理与可访问性。含 review / audit / debt / gain / help 五个专项技能，每日自动跟随 GitHub 最新 release。",
+  "author": "Ponytail ruleset by Dietrich Gebert (MIT); local package for MiniMax Code",
+  "icon": "icon.png",
+  "darkIcon": "icon-dark.png",
+  "category": "Code",
+  "exampleQueries": [
+    "开启 ponytail 模式，用最少的代码实现这个功能",
+    "用 ponytail ultra 审一下当前改动有多少能删",
+    "ponytail-debt，把代码库里标记的待办整理成技术债台账",
+    "审计这个仓库的过度设计，给出能删的清单",
+    "更新 ponytail 到最新版",
+    "ponytail 有哪些命令，速查一下"
+  ],
+  "apps": [],
+  "mcpServers": [],
+  "skills": [
+    "skills/ponytail/SKILL.md",
+    "skills/ponytail-review/SKILL.md",
+    "skills/ponytail-audit/SKILL.md",
+    "skills/ponytail-debt/SKILL.md",
+    "skills/ponytail-gain/SKILL.md",
+    "skills/ponytail-help/SKILL.md",
+    "skills/ponytail-update/SKILL.md"
+  ],
+  "hooks": [
+    "hooks/hooks.json"
+  ]
+}

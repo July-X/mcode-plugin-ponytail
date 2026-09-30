@@ -1,0 +1,18 @@
+{
+  "repo": "https://github.com/DietrichGebert/ponytail",
+  "version": "v4.10.0",
+  "tag": "v4.10.0",
+  "publishedAt": "2026-09-14T14:38:56Z",
+  "fetchedAt": "2026-09-30",
+  "license": "MIT",
+  "copyright": "Copyright (c) Dietrich Gebert",
+  "files": [
+    "skills/ponytail/SKILL.md",
+    "skills/ponytail-review/SKILL.md",
+    "skills/ponytail-audit/SKILL.md",
+    "skills/ponytail-debt/SKILL.md",
+    "skills/ponytail-gain/SKILL.md",
+    "skills/ponytail-help/SKILL.md"
+  ],
+  "note": "这是打包时钉住的快照，只在同步尚未跑过、或处于只读模式时生效。正常情况下以 PLUGIN_DATA/upstream/<tag>/ 下由 scripts/lib/sync.mjs 同步的版本为准。规则集的强度裁剪逻辑移植自上游 hooks/ponytail-instructions.js（MIT）。"
+}

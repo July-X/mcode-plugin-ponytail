@@ -1,0 +1,9 @@
+# 插件数据目录不该进仓库——它由宿主持有，sync 会写它
+plugin-data/
+# 打包/编辑残留
+.DS_Store
+*.tmp
+*.staging-*
+# 同步用的临时目录（正常情况 sync 自己会清，但兜底）
+.staging/
+node_modules/
