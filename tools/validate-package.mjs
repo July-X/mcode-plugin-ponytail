@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const ROOT = path.resolve(process.argv[2] || path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'ponytail'));
+const ROOT = path.resolve(process.argv[2] || path.join(path.dirname(new URL(import.meta.url).pathname), '..'));
 const CATEGORIES = new Set([
   'Office', 'Studio', 'Design & Sites', 'Code', 'Business', 'Sales',
   'Productivity', 'Science & Healthcare', 'Education', 'Other',
@@ -116,9 +116,11 @@ function extractDescription(fm) {
 }
 
 // 目录也要校验：只看文件的话，「空目录 + 非法目录名」能整段溜过去
+// 跳过 .git：允许在 clone 出来的源码仓库里直接跑，否则会走进去遍历上万条目
 function walk(dir, files = [], dirs = []) {
   if (!fs.existsSync(dir)) return { files, dirs };
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (e.name === '.git') continue;
     const p = path.join(dir, e.name);
     if (e.isSymbolicLink()) fail(`符号链接不允许: ${path.relative(ROOT, p)}`);
     else if (e.isDirectory()) { dirs.push(p); walk(p, files, dirs); }
@@ -193,7 +195,14 @@ if (m) {
   }
   if (m.schemaVersion !== 1) fail(`schemaVersion 必须是 1，实为 ${m.schemaVersion}`);
   if (!NAME_RE.test(m.name ?? '')) fail(`name 不合法: ${m.name}`);
-  if (m.name !== path.basename(ROOT)) fail(`name (${m.name}) 与目录名 (${path.basename(ROOT)}) 不一致`);
+  // 目录名必须等于插件名，否则宿主装到 plugins/<目录名>/ 下后身份对不上。
+  // 但仓库根目录叫仓库名（mcode-plugin-ponytail），跟插件名（ponytail）本来就不一样——
+  // 那是源码仓库，不是安装位置。带 .git 的就是源码树，跳过这条；装好的插件目录没有 .git。
+  const isSourceTree = fs.existsSync(path.join(ROOT, '.git'));
+  if (m.name !== path.basename(ROOT)) {
+    if (isSourceTree) ok.push(`name (${m.name}) 与仓库目录名不同属正常：宿主按 plugin.json 的 name 安装`);
+    else fail(`name (${m.name}) 与目录名 (${path.basename(ROOT)}) 不一致`);
+  }
   if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(m.version ?? '')) fail(`version 非 SemVer: ${m.version}`);
   if (!CATEGORIES.has(m.category)) fail(`category 非法: ${m.category}`);
   if (!Array.isArray(m.exampleQueries) || !m.exampleQueries.length) fail('exampleQueries 必须是非空数组');

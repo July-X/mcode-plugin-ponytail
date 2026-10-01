@@ -7,21 +7,21 @@ This repository is an adaptation layer. It is MIT-licensed in its own right
 Up Ponytail
 -----------
 
-The Ponytail ruleset, all six skill bodies under `ponytail/vendor/skills/`,
-and the intensity-filtering logic in `ponytail/scripts/lib/ruleset.mjs`
+The Ponytail ruleset, all six skill bodies under `vendor/skills/`,
+and the intensity-filtering logic in `scripts/lib/ruleset.mjs`
 (ported from upstream `hooks/ponytail-instructions.js`) originate from:
 
     Ponytail — https://github.com/DietrichGebert/ponytail
     MIT License
     Copyright (c) 2026 DietrichGebert
 
-The verbatim upstream license text is preserved at `ponytail/vendor/LICENSE`
+The verbatim upstream license text is preserved at `vendor/LICENSE`
 and must remain in any redistribution.
 
 Icons
 -----
 
-`ponytail/icon.png` and `ponytail/icon-dark.png` are original to this
+`icon.png` and `icon-dark.png` are original to this
 repository. An earlier revision borrowed the Code-category icon bundled with
 the MiniMax Code desktop application; that is no longer the case, and the
 borrowed artwork is not redistributed here.

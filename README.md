@@ -4,7 +4,7 @@
 
 ## ⚠️ 这不是一个独立项目
 
-规则集、技能正文、强度裁剪逻辑**全部来自上游** [DietrichGebert/ponytail](https://github.com/Dietrichgebert/ponytail)（MIT，Copyright © Dietrich Gebert），逐字复制在 `ponytail/vendor/` 里，并附原文许可 `ponytail/vendor/LICENSE`。
+规则集、技能正文、强度裁剪逻辑**全部来自上游** [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)（MIT，Copyright © Dietrich Gebert），逐字复制在 `vendor/` 里，并附原文许可 `vendor/LICENSE`。
 
 本仓库只提供**适配层**：把上游的 Claude Code / Codex 形态接到 MiniMax 的 Plugin V1 格式上，并补上自动更新。**如果你的工具不是 MiniMax Code，请直接用上游**——它原生支持 16+ 个 agent，装起来比自己写适配省事得多。
 
@@ -32,9 +32,32 @@
 
 **前置**：MiniMax Code 桌面版；`node` 在 PATH 上（钩子要用，Node ≥ 18 即可）。
 
+### 方式一：从 Git 仓库导入（推荐）
+
+插件面板 → 导入插件 → 从 Git 仓库导入，填：
+
+```text
+https://github.com/July-X/mcode-plugin-ponytail
+```
+
+清单 `.minimax-plugin/plugin.json` 就在**仓库根目录**，所以直接填仓库地址就行，**不要加子目录**。
+
+装完重启 MiniMax Code，在插件面板确认 **Ponytail** 已出现且已启用。
+
+> **报「所选目录不包含受支持的 Plugin 清单」怎么办**
+> 宿主是在你给的目录里找 `.minimax-plugin/plugin.json`，找不到就报这句。仓库根就是插件根，
+> 地址后面不要再拼路径。
+>
+> 早期版本曾把插件放在 `ponytail/` 子目录，那种布局必须写
+> `https://github.com/July-X/mcode-plugin-ponytail/tree/main/ponytail` 才能导入。
+> 现在目录已并到仓库根，那条子目录地址**不再存在**，照抄会报 404。
+
+### 方式二：手动拷贝
+
 ```sh
 git clone https://github.com/July-X/mcode-plugin-ponytail.git
-cp -R mcode-plugin-ponytail/ponytail ~/.minimax/plugins/ponytail
+mkdir -p ~/.minimax/plugins/ponytail
+rsync -a --exclude='.git' mcode-plugin-ponytail/ ~/.minimax/plugins/ponytail/
 ```
 
 目标路径：
@@ -47,17 +70,21 @@ cp -R mcode-plugin-ponytail/ponytail ~/.minimax/plugins/ponytail
 
 如果你改过数据目录（环境变量 `MINIMAX_DATA_DIR`），放进那个目录下的 `plugins/` 里。
 
-装完重启 MiniMax Code，在插件面板确认 **Ponytail** 已出现且已启用。
+**注意别漏掉隐藏目录** —— 插件靠 `.minimax-plugin/plugin.json` 被识别。`rsync` / `cp -R` 会带上，
+别用只拷可见文件的方式（`cp mcode-plugin-ponytail/* …` 这种通配会漏掉 `.minimax-plugin`）。
 
-**注意别漏掉隐藏目录** —— 插件靠 `ponytail/.minimax-plugin/plugin.json` 被识别，`cp -R` 会带上，别用只拷可见文件的方式。
-
-装完可以自检：
+### 装完自检
 
 ```sh
-node tools/validate-package.mjs ponytail
+node ~/.minimax/plugins/ponytail/tools/validate-package.mjs ~/.minimax/plugins/ponytail
 ```
 
 它会校验清单字段、技能 frontmatter、钩子声明、图标字节与路径合法性；有问题会列出具体哪一条红。
+在源码仓库里跑就省掉参数：
+
+```sh
+node tools/validate-package.mjs
+```
 
 ## 用法
 
@@ -81,7 +108,7 @@ node tools/validate-package.mjs ponytail
 
 于是本适配层只在每个会话启动时注入**一行**指针（活动版本 + 强度 + 数据根 + CLI 路径），约 90 token，供技能找到活的内容。规则集正文不进去。
 
-想改回常驻注入：给 `ponytail/hooks/hooks.json` 加一个 `UserPromptSubmit` handler，跑 `ponytail.mjs rules` 并把输出写进 `additionalContext`，约 10 行。
+想改回常驻注入：给 `hooks/hooks.json` 加一个 `UserPromptSubmit` handler，跑 `ponytail.mjs rules` 并把输出写进 `additionalContext`，约 10 行。
 
 ## 自动更新
 
@@ -95,14 +122,14 @@ node tools/validate-package.mjs ponytail
 手动查：`ponytail-update`，或
 
 ```sh
-node ponytail/scripts/ponytail.mjs update --force
-node ponytail/scripts/ponytail.mjs status
+node scripts/ponytail.mjs update --force
+node scripts/ponytail.mjs status
 ```
 
 排查卡在哪一步（分阶段耗时打到 stderr）：
 
 ```sh
-PONYTAIL_TRACE=1 node ponytail/scripts/ponytail.mjs update --force
+PONYTAIL_TRACE=1 node scripts/ponytail.mjs update --force
 ```
 
 ### 换镜像
@@ -127,8 +154,8 @@ export PONYTAIL_NPM_MIRROR=https://registry.npmmirror.com
 ## 目录结构
 
 ```
-ponytail/
-  .minimax-plugin/plugin.json     插件清单
+mcode-plugin-ponytail/
+  .minimax-plugin/plugin.json     插件清单 ← 宿主靠这个认包，所以必须在仓库根
   icon.png / icon-dark.png        明暗图标（本仓库原创，512×512 RGBA）
   hooks/hooks.json                SessionStart：每日更新检查 + 一行指针
   skills/                         7 个 MiniMax 技能（薄路由层，不复述规则）
@@ -137,7 +164,8 @@ ponytail/
     session-start.mjs             钩子入口
     lib/{paths,sync,ruleset,emit}.mjs
   vendor/                         上游 v4.10.0 钉版快照（离线回退，永不被改写）
-tools/validate-package.mjs        安装自检
+  tools/validate-package.mjs      安装自检（随包分发，装完可跑）
+  README.md / LICENSE / NOTICE    文档与许可
 ```
 
 `vendor/` 是打包时的钉版快照，只在同步尚未跑过或处于只读模式时生效。日常用的是 `PLUGIN_DATA/upstream/<tag>/` 下由 `scripts/lib/sync.mjs` 同步的版本。同步**只写数据目录，永远不改插件包**。
@@ -146,7 +174,7 @@ tools/validate-package.mjs        安装自检
 
 本仓库的适配层代码与文档以 MIT 发布，许可文本见 [`LICENSE`](LICENSE)。第三方归属集中列在 [`NOTICE`](NOTICE)。
 
-上游 Ponytail 项目同样以 MIT 发布，Copyright © Dietrich Gebert，许可文本见 [`ponytail/vendor/LICENSE`](ponytail/vendor/LICENSE)。规则集的强度裁剪逻辑移植自上游 `hooks/ponytail-instructions.js`。
+上游 Ponytail 项目同样以 MIT 发布，Copyright © Dietrich Gebert，许可文本见 [`vendor/LICENSE`](vendor/LICENSE)。规则集的强度裁剪逻辑移植自上游 `hooks/ponytail-instructions.js`。
 
 图标为本仓库原创：一笔马尾从顶端的结一路收到尾端的尖，横档是阶梯。收尖那段就是概念本身——阶梯往下走代码越来越少，少到末端只剩一个点。明暗两版是同一个形状换色，不是两张各画各的图。
 
