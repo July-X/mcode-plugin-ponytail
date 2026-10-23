@@ -206,7 +206,11 @@ if (m) {
   if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(m.version ?? '')) fail(`version 非 SemVer: ${m.version}`);
   if (!CATEGORIES.has(m.category)) fail(`category 非法: ${m.category}`);
   if (!Array.isArray(m.exampleQueries) || !m.exampleQueries.length) fail('exampleQueries 必须是非空数组');
-  else m.exampleQueries.forEach((q, i) => { if (typeof q !== 'string' || !q.trim()) fail(`exampleQueries[${i}] 无非空白文本`); });
+  else {
+    // 官方投稿指南：exampleQueries 0–3 条。超了上架时会被直接打回。
+    if (m.exampleQueries.length > 3) fail(`exampleQueries 超过 3 条（实为 ${m.exampleQueries.length} 条），官方规格上限是 3`);
+    m.exampleQueries.forEach((q, i) => { if (typeof q !== 'string' || !q.trim()) fail(`exampleQueries[${i}] 无非空白文本`); });
+  }
   if (!Array.isArray(m.apps) || m.apps.length) fail('apps 必须为空数组（本地 App 能力被忽略）');
 
   for (const field of ['icon', 'darkIcon']) {

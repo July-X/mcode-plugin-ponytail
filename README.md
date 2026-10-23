@@ -102,11 +102,13 @@ node tools/validate-package.mjs
 
 ## 与上游的一个关键差异：规则集不自动注入
 
-上游在 Claude Code / Codex 上默认**每轮**把规则集注入上下文。这里**不这么做**——规则集只在显式调用 `ponytail` 技能时生效，之后在本会话内持续有效。
+上游 v5 在 Claude Code / Codex 上靠**两个生命周期钩子**让规则集生效（它自己的说法是 "Active every session"）：会话启动时注入一次完整规则集，每个子智能体启动时再注入一份。**不是每轮注入**——模式变了才补一次。
 
-原因：上游 README 自己算过这笔账——「规则集每轮重新注入，在很短的 prompt 上这个开销可能超过它省下的成本」。上游还提到 74k star 版本实测能省 54% 代码量、22% token、27% 时间，但那是**不含每轮注入开销**的对比。
+这里**不这么做**——规则集只在显式调用 `ponytail` 技能时生效，之后在本会话内持续有效。
 
-于是本适配层只在每个会话启动时注入**一行**指针（活动版本 + 强度 + 数据根 + CLI 路径），约 90 token，供技能找到活的内容。规则集正文不进去。
+原因：完整规则集实测 2,970 字节（≈740 token），给每个子智能体各注入一份，派 5 个子智能体就是约 3,700 token 全是规则集。上游为此专门加了 `PONYTAIL_SUBAGENT_MATCHER` 做范围限制。本适配层只在会话启动时注入**一行**指针（活动版本 + 强度 + 数据根 + CLI 路径），实测 243 字符（≈60 token），供技能找到活的内容。规则集正文不进去。
+
+代价是子智能体拿不到那行指针——**但实测它仍然能自己拿到完整规则集**（走技能里的 CLI 退路 + 数据根探测）。真正的风险是数据根探测失败时**静默降级**到包内钉版快照，而不是拿不到。详见 [`docs/hook-integration-research.md`](docs/hook-integration-research.md)，里面有两个探针的完整取证过程。
 
 想改回常驻注入：给 `hooks/hooks.json` 加一个 `UserPromptSubmit` handler，跑 `ponytail.mjs rules` 并把输出写进 `additionalContext`，约 10 行。
 
@@ -165,6 +167,7 @@ mcode-plugin-ponytail/
     lib/{paths,sync,ruleset,emit}.mjs
   vendor/                         上游 v4.10.0 钉版快照（离线回退，永不被改写）
   tools/validate-package.mjs      安装自检（随包分发，装完可跑）
+  docs/hook-integration-research.md  钩子接入调研（暂不接入的理由与触发条件）
   README.md / LICENSE / NOTICE    文档与许可
 ```
 

@@ -96,18 +96,44 @@ export function readState(dataRoot) {
   }
 }
 
-/** 原子写：先写同目录临时文件再 rename，避免读到写了一半的 JSON。 */
+/**
+ * 原子写：先写同目录临时文件再 rename，避免读到写了一半的 JSON。
+ *
+ * 临时文件名带 pid，是为了并发写不互相踩。代价是被强杀时会留下垃圾：
+ * 钩子超时时运行时直接 kill 进程，正卡在 writeFileSync 与 renameSync 之间的话
+ * 临时文件就永远留在数据目录里（实测积了 4 个 state.json.<pid>.tmp）。
+ * 两道防线：写失败时清掉自己的临时文件；再顺手扫掉明显过期的残留。
+ */
+const STALE_TMP_MS = 10 * 60 * 1000;
+
+function sweepStaleTmp(dataRoot, keep) {
+  try {
+    for (const name of fs.readdirSync(dataRoot)) {
+      if (!name.startsWith(`${STATE_FILE}.`) || !name.endsWith('.tmp')) continue;
+      if (name === keep) continue;
+      const p = path.join(dataRoot, name);
+      // 只清 mtime 很旧的：活进程的临时文件是毫秒级的，不会被误删
+      if (Date.now() - fs.statSync(p).mtimeMs < STALE_TMP_MS) continue;
+      fs.rmSync(p, { force: true });
+    }
+  } catch {
+    /* 清理失败不影响主流程 */
+  }
+}
+
 export function writeState(dataRoot, patch) {
   if (!dataRoot) return false;
+  const target = path.join(dataRoot, STATE_FILE);
+  const tmp = `${target}.${process.pid}.tmp`;
   try {
     fs.mkdirSync(dataRoot, { recursive: true });
     const next = { ...readState(dataRoot), ...patch };
-    const target = path.join(dataRoot, STATE_FILE);
-    const tmp = `${target}.${process.pid}.tmp`;
     fs.writeFileSync(tmp, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
     fs.renameSync(tmp, target);
+    sweepStaleTmp(dataRoot, path.basename(tmp));
     return true;
   } catch {
+    try { fs.rmSync(tmp, { force: true }); } catch { /* 清不掉就算了 */ }
     return false;
   }
 }
